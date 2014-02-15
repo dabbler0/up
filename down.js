@@ -99,7 +99,7 @@
     writeText('#000', '50px Arial', 'DOWN', 0);
     writeText('#FFF', '20px Arial', 'A dystopian tale of jetpacks', 25);
     writeText('#FFF', '15px Arial', 'Arrow keys to move.', 45);
-    writeText('#FFF', '15px Arial', 'Get the blue squares.', 60);
+    writeText('#FFF', '15px Arial', 'Get the orange squares.', 60);
     writeText('#FFF', '15px Arial', 'Avoid the ground.', 75);
     writeText('#FFF', '20px Arial', 'Any key to start', 115);
     document.body.addEventListener('keydown', function(event) {
@@ -168,7 +168,7 @@
       timeHit = -Infinity;
       canvasShifted = false;
       tick = function() {
-        var continueFrames, _k, _len2;
+        var acceleration, bullet, continueFrames, _k, _len2;
         turnsPassed += 1;
         continueFrames = true;
         for (_k = 0, _len2 = food.length; _k < _len2; _k++) {
@@ -186,25 +186,34 @@
           player.color = '#FFF';
         }
         if (remainingFuel > 0) {
+          acceleration = [0, 0];
           if (keysdown[37]) {
-            player.color = '#FA0';
-            remainingFuel -= JETPACK_FUEL_USAGE;
             player.velocity[0] -= JETPACK_ACCEL;
+            acceleration[0] -= JETPACK_ACCEL;
+            remainingFuel -= JETPACK_FUEL_USAGE;
           }
           if (keysdown[38]) {
-            player.color = '#FA0';
-            remainingFuel -= JETPACK_FUEL_USAGE;
             player.velocity[1] -= JETPACK_ACCEL;
+            acceleration[1] -= JETPACK_ACCEL;
+            remainingFuel -= JETPACK_FUEL_USAGE;
           }
           if (keysdown[39]) {
-            player.color = '#FA0';
-            remainingFuel -= JETPACK_FUEL_USAGE;
             player.velocity[0] += JETPACK_ACCEL;
+            acceleration[0] += JETPACK_ACCEL;
+            remainingFuel -= JETPACK_FUEL_USAGE;
           }
           if (keysdown[40]) {
-            player.color = '#FA0';
-            remainingFuel -= JETPACK_FUEL_USAGE;
             player.velocity[1] += JETPACK_ACCEL;
+            acceleration[1] += JETPACK_ACCEL;
+            remainingFuel -= JETPACK_FUEL_USAGE;
+          }
+          if (acceleration[0] !== 0 || acceleration[1] !== 0) {
+            bullet = new Sprite([player.position[0] + Math.random() * player.dimensions[0] - 2.5, player.position[1] + Math.random() * player.dimensions[1] - 2.5], [5, 5], '#FA0');
+            bullet.velocity = [Math.random() * 1 - 0.5 - 30 * acceleration[0], Math.random() * 1 - 0.5 - 30 * acceleration[1]];
+            setTimeout((function() {
+              return gameObjects.splice(gameObjects.indexOf(bullet), 1);
+            }), 300 * Math.random());
+            gameObjects.push(bullet);
           }
         }
         player.velocity[1] += GRAVITY;

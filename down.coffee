@@ -141,22 +141,31 @@ window.onload = ->
         player.color = '#FFF'
 
       if remainingFuel > 0
+        acceleration = [0, 0]
+
         if keysdown[37]
-          player.color = '#FA0'
-          remainingFuel -= JETPACK_FUEL_USAGE
           player.velocity[0] -= JETPACK_ACCEL
+          acceleration[0] -= JETPACK_ACCEL
+          remainingFuel -= JETPACK_FUEL_USAGE
         if keysdown[38]
-          player.color = '#FA0'
-          remainingFuel -= JETPACK_FUEL_USAGE
           player.velocity[1] -= JETPACK_ACCEL
+          acceleration[1] -= JETPACK_ACCEL
+          remainingFuel -= JETPACK_FUEL_USAGE
         if keysdown[39]
-          player.color = '#FA0'
-          remainingFuel -= JETPACK_FUEL_USAGE
           player.velocity[0] += JETPACK_ACCEL
-        if keysdown[40]
-          player.color = '#FA0'
+          acceleration[0] += JETPACK_ACCEL
           remainingFuel -= JETPACK_FUEL_USAGE
+        if keysdown[40]
           player.velocity[1] += JETPACK_ACCEL
+          acceleration[1] += JETPACK_ACCEL
+          remainingFuel -= JETPACK_FUEL_USAGE
+        if acceleration[0] isnt 0 or acceleration[1] isnt 0
+          bullet = new Sprite [player.position[0] + Math.random() * player.dimensions[0] - 2.5, player.position[1] + Math.random() * player.dimensions[1] - 2.5], [5, 5], '#FA0' #['#F00', '#FA0', 'FF0'][Math.floor Math.random() * 3]
+          bullet.velocity = [Math.random() * 1 - 0.5 - 30 * acceleration[0], Math.random() * 1 - 0.5 - 30 * acceleration[1]] #[player.velocity[0] * 10 + Math.random() * 2 - 1, player.velocity[1] * 10 + Math.random() * 2 - 1]
+          setTimeout (->
+            gameObjects.splice gameObjects.indexOf(bullet), 1
+          ), 300 * Math.random()
+          gameObjects.push bullet
       
       player.velocity[1] += GRAVITY
 
