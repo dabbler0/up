@@ -135,7 +135,6 @@ window.onload = ->
 
         if item.position[0] < -item.dimensions[0] and item.position[1] > 0
           item.replace canvas
-        item.move()
 
       if turnsPassed - timeHit > FLASH_DURATION
         player.color = '#FFF'
@@ -199,7 +198,8 @@ window.onload = ->
       player.velocity[0] *= 0.995
       
       if continueFrames
-        player.move()
+        for object in gameObjects
+          object.move()
 
         redraw()
 

@@ -168,7 +168,7 @@
       timeHit = -Infinity;
       canvasShifted = false;
       tick = function() {
-        var acceleration, bullet, continueFrames, _k, _len2;
+        var acceleration, bullet, continueFrames, object, _k, _l, _len2, _len3;
         turnsPassed += 1;
         continueFrames = true;
         for (_k = 0, _len2 = food.length; _k < _len2; _k++) {
@@ -180,7 +180,6 @@
           if (item.position[0] < -item.dimensions[0] && item.position[1] > 0) {
             item.replace(canvas);
           }
-          item.move();
         }
         if (turnsPassed - timeHit > FLASH_DURATION) {
           player.color = '#FFF';
@@ -247,7 +246,10 @@
         player.velocity[1] *= 0.995;
         player.velocity[0] *= 0.995;
         if (continueFrames) {
-          player.move();
+          for (_l = 0, _len3 = gameObjects.length; _l < _len3; _l++) {
+            object = gameObjects[_l];
+            object.move();
+          }
           redraw();
           return setTimeout(tick, 10 / FRAME_RATE);
         }
