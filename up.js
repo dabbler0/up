@@ -142,7 +142,7 @@
       timeHit = -Infinity;
       canvasShifted = false;
       tick = function() {
-        var continueFrames;
+        var acceleration, bullet, continueFrames, object, _i, _len;
         turnsPassed += 1;
         continueFrames = true;
         if (player.overlaps(food)) {
@@ -153,25 +153,34 @@
           player.color = '#FFF';
         }
         if (remainingFuel > 0) {
+          acceleration = [0, 0];
           if (keysdown[37]) {
-            player.color = '#FA0';
-            remainingFuel -= JETPACK_FUEL_USAGE;
             player.velocity[0] -= JETPACK_ACCEL;
+            acceleration[0] -= JETPACK_ACCEL;
+            remainingFuel -= JETPACK_FUEL_USAGE;
           }
           if (keysdown[38]) {
-            player.color = '#FA0';
-            remainingFuel -= JETPACK_FUEL_USAGE;
             player.velocity[1] -= JETPACK_ACCEL;
+            acceleration[1] -= JETPACK_ACCEL;
+            remainingFuel -= JETPACK_FUEL_USAGE;
           }
           if (keysdown[39]) {
-            player.color = '#FA0';
-            remainingFuel -= JETPACK_FUEL_USAGE;
             player.velocity[0] += JETPACK_ACCEL;
+            acceleration[0] += JETPACK_ACCEL;
+            remainingFuel -= JETPACK_FUEL_USAGE;
           }
           if (keysdown[40]) {
-            player.color = '#FA0';
-            remainingFuel -= JETPACK_FUEL_USAGE;
             player.velocity[1] += JETPACK_ACCEL;
+            acceleration[1] += JETPACK_ACCEL;
+            remainingFuel -= JETPACK_FUEL_USAGE;
+          }
+          if (acceleration[0] !== 0 || acceleration[1] !== 0) {
+            bullet = new Sprite([player.position[0] + Math.random() * player.dimensions[0] - 2.5, player.position[1] + Math.random() * player.dimensions[1] - 2.5], [5, 5], '#FA0');
+            bullet.velocity = [Math.random() * 1 - 0.5 - 30 * acceleration[0], Math.random() * 1 - 0.5 - 30 * acceleration[1]];
+            setTimeout((function() {
+              return gameObjects.splice(gameObjects.indexOf(bullet), 1);
+            }), 300 * Math.random());
+            gameObjects.push(bullet);
           }
         }
         player.velocity[1] += GRAVITY;
@@ -230,7 +239,10 @@
         player.velocity[1] *= 0.995;
         player.velocity[0] *= 0.995;
         if (continueFrames) {
-          player.move();
+          for (_i = 0, _len = gameObjects.length; _i < _len; _i++) {
+            object = gameObjects[_i];
+            object.move();
+          }
           redraw();
           return setTimeout(tick, 10 / FRAME_RATE);
         }
